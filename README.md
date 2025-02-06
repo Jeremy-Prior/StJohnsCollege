@@ -35,7 +35,7 @@ on the official docker page to get it set up.
 First checkout out the source tree:
 
 ```
-git clone git://github.com/kartoza/feti.git
+git clone git://github.com/kartoza/StJohnsCollege.git
 ```
 
 #### Build your docker images and run them
