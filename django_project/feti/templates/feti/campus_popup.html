@@ -1,0 +1,13 @@
+<div class="leaflet-header">
+     <h3>{{ provider }}</h3>
+</div>
+<div class="leaflet-place">
+    {% if campus != 'Unknown campus' %}
+        <strong>Campus: {{ campus }}</strong>
+    {% endif %}
+</div>
+<div class="leaflet-content">
+    <div><i class="fa fa-map-marker"></i> {{ address_full }} </div>
+    <div><i class="fa fa-link"></i> {% if website != 'N/A' %}<a href="{{ website }}" target="_blank">{{ website }}</a>{% endif %} </div>
+    <div><i class="fa fa-phone"></i> {{ phone }}</div>
+</div>

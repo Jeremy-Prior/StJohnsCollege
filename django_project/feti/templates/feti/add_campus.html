@@ -1,0 +1,18 @@
+{% extends "flood_mapper/base.html" %}
+{% block header %}
+    <title>Add Campus</title>
+{%  endblock %}
+
+{% load bootstrap_tags %}
+
+{% block navigation-bar %}
+    {% include "feti/navigation_bar.html" %}
+{%  endblock %}
+
+{% block content %}
+    <div class="container-fluid">
+        <div class="row">
+            {{ form }}
+        </div>
+    </div> <!-- /container -->
+{%  endblock %}

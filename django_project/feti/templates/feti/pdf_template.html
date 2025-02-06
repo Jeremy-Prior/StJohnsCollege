@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head> <title>{{ title }}</title> </head>
+<body>
+{% if provider == 'favorites' %}
+    <h2>Your favorites</h2>
+{% else %}
+    <h2>Search : {{ query }} in
+    {% if provider == 'provider' %}
+        all campuses.
+    {% else %}
+        all courses.
+    {% endif %}
+    </h2>
+{% endif %}
+
+{% if options %}
+    <h2>Options</h2>
+    <ul>
+    {% for option in options %}
+        <li>{{ option }}</li>
+    {% endfor %}
+    </ul>
+{% endif %}
+
+{% if type == 'pdf' %}
+    <h2>Map :</h2>
+    <img src="assets:{{ image }}" style="width: 100%;"/>
+    <br/>
+{% else %}
+    <h2>Link : </h2>
+    <strong>{{ link }}</strong>
+{% endif %}
+
+<h2>List Campus :</h2>
+<ul>
+{% for campus in campuses %}
+    <li>
+        <div class="campus-wrapper">
+            <p><a href="{{ campus.campus_website }}">{{ campus.campus_provider }}</a></p>
+            <p>{{ campus.campus_address }}</p>
+        </div>
+    </li>
+{% endfor %}
+</ul>
+
+</body>
+</html>

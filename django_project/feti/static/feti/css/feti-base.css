@@ -1,0 +1,447 @@
+/*
+ * Start Bootstrap - Landing Page (http://startbootstrap.com/)
+ * Copyright 2013-2016 Start Bootstrap
+ * Licensed under MIT (https://github.com/BlackrockDigital/startbootstrap/blob/gh-pages/LICENSE)
+ */
+
+body,
+html {
+    width: 100%;
+    height: 100%;
+}
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-weight: 700;
+}
+
+.lead {
+    font-size: 18px;
+    font-weight: 400;
+}
+
+.intro-header {
+    padding-top: 0px; /* If you're making other pages, make sure there is 50px of padding to make sure the navbar doesn't overlap content! */
+    padding-bottom: 0px;
+    color: #f8f8f8;
+    background: url(../images/beau-blue-solid-color-background.jpg) no-repeat center center;
+    background-size: cover;
+}
+
+.intro-message {
+    position: relative;
+    padding-top: 15%;
+}
+
+.intro-message > h1 {
+    margin: 0;
+    font-size: 3.5em;
+    width: 600px;
+}
+
+.intro-divider {
+    width: 400px;
+    border-top: 1px solid #f8f8f8;
+}
+
+.intro-message > h3 {
+}
+
+.intro-message > h2 {
+    font-weight: 100;
+}
+
+.intro-message > h2 .count {
+    font-weight: bold;
+}
+
+.intro-section {
+    text-align: center;
+}
+
+@media (max-width: 767px) {
+    .intro-message {
+        padding-bottom: 15%;
+    }
+
+    .intro-message > h1 {
+        font-size: 3em;
+        width: 300px;
+    }
+
+    ul.intro-social-buttons > li {
+        display: block;
+        margin-bottom: 20px;
+        padding: 0;
+    }
+
+    ul.intro-social-buttons > li:last-child {
+        margin-bottom: 0;
+    }
+
+    .intro-divider {
+        width: 100%;
+    }
+
+    #feti-map {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+.topnav {
+    font-size: 14px;
+    margin-bottom: 0;
+    border-radius: 0;
+}
+
+#navigation_bar {
+    position: fixed;
+    width: 100%;
+    top: 0px;
+    left: 0px;
+    z-index: 1000002;
+}
+
+#content {
+    margin-top: 0px !important;
+    min-height: 100%;
+}
+
+.left-inner-addon {
+    position: relative;
+}
+
+.left-inner-addon input {
+    padding-left: 30px;
+}
+
+.left-inner-addon i {
+    position: absolute;
+    padding: 10px 12px;
+    pointer-events: none;
+}
+
+.right-inner-addon {
+    position: relative;
+}
+
+.right-inner-addon input {
+    padding-right: 30px;
+}
+
+.right-inner-addon i {
+    position: absolute;
+    right: 0px;
+    padding: 10px 12px;
+    pointer-events: none;
+}
+
+.nopadding {
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+.main-color {
+    background-color: #428bca;
+}
+
+.span3 {
+    font-weight: 500;
+    width: 270px;
+}
+
+.material-icons {
+    font-size: 14px;
+}
+
+.map-field {
+    height: 550px;
+}
+
+[class*="span"] {
+    float: left;
+    min-height: 1px;
+    margin-left: 30px;
+}
+
+footer {
+    padding-top: 5px !important;
+    padding-bottom: 15px !important;
+    background-color: #214971 !important;
+    color: white !important;
+}
+
+p.copyright, p.login-link, p.login-link a {
+    margin: 15px 0 0;
+    color: white;
+}
+
+p.copyright img {
+    margin-top: -9px;
+}
+
+p.copyright a {
+    color: white;
+    text-decoration: none;
+}
+
+p.copyright a:hover {
+    color: #428bca;
+}
+
+p.login-link :hover {
+    text-decoration: none;
+}
+
+.single-form-container {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.profile-wrapper {
+    padding-top: 100px;
+    padding-bottom: 100px;
+}
+
+.profile-photo {
+    width: 250px;
+    height: 250px;
+    margin-bottom: 20px;
+    background-color: #f8f8ff;
+    background: url('/static/feti/images/noimagefound.jpg') no-repeat center center;
+    border: 1px solid grey;
+}
+
+.profile-photo img {
+    max-width: 100%;
+    max-height: 100%;
+    vertical-align: middle;
+}
+
+.partner-section {
+    margin-bottom: 55px;
+}
+
+footer {
+    margin-top: -55px;
+}
+
+.user-profile-label {
+    margin-bottom: -10px;
+    color: #31a3de;
+}
+
+.user-profile-text {
+    padding-bottom: 15px;
+}
+
+.easy-button-button.deactivate-active {
+    color: #a92121;
+}
+
+.easy-button-button.deactivate-active:hover {
+    background-color: #a92121;
+    color: white;
+}
+
+#feti-map .easy-button-button.clearButton-active {
+    transition-duration: .3s;
+    position: relative;
+    border: solid 0 transparent;
+}
+
+#feti-map .easy-button-container.clearButton-active {
+    background-color: white;
+}
+
+#feti-map .clearButton-active {
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin-top: 0 !important;
+}
+
+#feti-map .easy-button-button.clearButton-active.disabled {
+    height: 0;
+}
+
+/* Legend */
+.legend {
+    line-height: 18px;
+    color: #333333;
+    font-family: 'Open Sans', Helvetica, sans-serif;
+    padding: 6px 8px;
+    background: white;
+    background: rgba(255,255,255,0.8);
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.legend img{
+    width: 18px;
+    height: 18px;
+    float: left;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: right;
+    margin-left: 8px;
+    opacity: 0.7;
+}
+
+.legend p {
+    font-size: 12px;
+    line-height: 18px;
+    margin: 0;
+}
+
+.share-container {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: white !important;
+}
+
+.share-item p {
+    height: 60px;
+    line-height: 60px;
+    margin-bottom: 0;
+    vertical-align: middle;
+    text-align: center;
+    color: #777;
+}
+
+.share-icon i {
+    font-size: 17pt;
+}
+
+.share-icon a {
+    color: #777;
+}
+
+.share-icon a:hover {
+    color: #3376ba;
+    cursor: pointer;
+}
+
+/**
+ * Tooltip Styles
+ */
+
+/* Add this attribute to the element that needs a tooltip */
+[data-tooltip] {
+    position: relative;
+    z-index: 2;
+    cursor: pointer;
+}
+
+/* Hide the tooltip content by default */
+[data-tooltip]:before,
+[data-tooltip]:after {
+    visibility: hidden;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=0)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=0);
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Position tooltip above the element */
+[data-tooltip]:before {
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    margin-bottom: 5px;
+    margin-left: -80px;
+    padding: 7px;
+    width: 160px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #000;
+    background-color: hsla(0, 0%, 20%, 0.9);
+    color: #fff;
+    content: attr(data-tooltip);
+    text-align: center;
+    font-size: 14px;
+    line-height: 1.2;
+}
+
+/* Triangle hack to make tooltip look like a speech bubble */
+[data-tooltip]:after {
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    margin-left: -5px;
+    width: 0;
+    border-top: 5px solid #000;
+    border-top: 5px solid hsla(0, 0%, 20%, 0.9);
+    border-right: 5px solid transparent;
+    border-left: 5px solid transparent;
+    content: " ";
+    font-size: 0;
+    line-height: 0;
+}
+
+/* Show tooltip content on hover */
+[data-tooltip]:hover:before,
+[data-tooltip]:hover:after {
+    visibility: visible;
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=100)";
+    filter: progid:DXImageTransform.Microsoft.Alpha(Opacity=100);
+    opacity: 1;
+}
+
+.highlighted {
+    background-color: yellow;
+}
+
+#feti-map {
+    z-index: 5;
+}
+
+.ui-tooltip {
+    padding: 5px;
+    position: absolute;
+    z-index: 9999;
+    max-width: 300px;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    font-size: 9pt !important;
+    background-color: #2572b9;
+    color: white;
+    border: none !important;
+}
+
+#rcorner {
+    border-radius: 25px;
+    border: 1px solid white;
+    padding: 5px 0;
+    text-align: center;
+    color: white;
+    margin: 12px 0 0;
+}
+
+#rcorner a {
+    color: white;
+}
+
+#rcorner a:hover {
+    text-decoration: none;
+}
+
+.vertical-space {
+    height: 10px;
+    position: relative;
+    padding-top: 10px;
+    padding-bottom: 20px;
+}

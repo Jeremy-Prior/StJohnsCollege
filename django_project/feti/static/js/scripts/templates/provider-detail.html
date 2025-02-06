@@ -1,0 +1,13 @@
+<table>
+    <td valign="center" ><img src="<%- icon %>" width="54" height="54"/></td>
+    <td style="width: 80%" class="details">
+        <h3><%= title %></h3>
+        <p class="courses"><%- counts %> courses <i class="fa fa-angle-down" aria-hidden="true"></i></p>
+    </td>
+    <td style="width: 30%">
+        <span id='favorite-<%- id %>' class="favorites pull-right" style="margin-right: 20px">
+            <i class="<%if(saved){print('fa fa-star filled');} else {print('fa fa-star-o')}%>" aria-hidden="true"></i>
+        </span>
+    </td>
+</table>
+

@@ -1,0 +1,27 @@
+<!-- Login Modal -->
+<div class="modal-dialog">
+    <div class="loginmodal-container">
+        <h1>Login</h1><br>
+
+        <form class="form" name="LoginForm" action="/login-modal/" method="post">
+            <input type="hidden" name="next" id="login-next"/>
+            <input type="text" name="username" id="username" value="{{ username }}"
+                   placeholder="Username">
+            <input type="password" name="password" id="password"
+                   placeholder="Password">
+            <input type="submit" name="login" class="login loginmodal-submit" value="Login">
+        </form>
+
+        <div class="login-help">
+            If you have not created an account yet, then please <a href="accounts/signup/">sign up</a> first.
+        </div>
+        {% if error %}
+            <div class="alert alert-danger">
+                <a href="#" class="close" data-dismiss="alert">&times;</a>
+                <strong>Error!</strong>
+                {{ error }}
+            </div>
+        {% endif %}
+    </div>
+</div>
+<!-- /. Login Modal -->
