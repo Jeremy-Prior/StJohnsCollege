@@ -11,7 +11,9 @@ def get_address(row, retry=1):
     """Returns a list of address components based on row data."""
     address = []
     if retry == 1:
-        if row[1] and row[1] != 'Cnr':
+        if row[0] and row[0] != 'Cnr':
+            address.append(row[0].strip())
+        if row[1]:
             address.append(row[1].strip())
         if row[2]:
             address.append(row[2].strip())
@@ -19,19 +21,17 @@ def get_address(row, retry=1):
             address.append(row[3].strip())
         if row[4]:
             address.append(row[4].strip())
-        if row[5]:
-            address.append(row[5].strip())
     if retry == 2:
-        if row[1] and row[1] != 'Cnr':
+        if row[0] and row[0] != 'Cnr':
+            address.append(row[0].strip())
+        if row[1]:
             address.append(row[1].strip())
-        if row[2]:
+        if row[2] and row[2] != row[1]:
             address.append(row[2].strip())
         if row[3] and row[3] != row[2]:
             address.append(row[3].strip())
-        if row[4] and row[4] != row[3]:
+        if row[4]:
             address.append(row[4].strip())
-        if row[5]:
-            address.append(row[5].strip())
     return address
 
 from geopy.geocoders import Nominatim
@@ -54,22 +54,26 @@ def process(input_csv, output_shapefile):
         reader = csv.reader(file)
         next(reader)  # Skip the header row
         
+        i = 0
         for row in reader:
             address = get_address(row, 1)
-            address_str = ','.join(address)
-            
+            address.append('South Africa')
+            address_str = ', '.join(address)
+
             if address_str:
                 # First attempt to geocode the address using Nominatim
-                location = geolocator.geocode(address_str, country_codes='ZA')
+                location = geolocator.geocode(address_str)
                 if location:
                     points.append(Point(location.longitude, location.latitude))
                     addresses.append(address_str)
                 else:
+                    time.sleep(0.5)
                     # Second attempt with a different address format
                     address = get_address(row, 2)
+                    address.append('South Africa')
                     address_str = ','.join(address)
                     if address_str:
-                        location = geolocator.geocode(address_str, country_codes='ZA')
+                        location = geolocator.geocode(address_str)
                         if location:
                             points.append(Point(location.longitude, location.latitude))
                             addresses.append(address_str)

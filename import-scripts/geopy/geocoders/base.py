@@ -127,7 +127,7 @@ class Geocoder(object): # pylint: disable=R0921
         For a generated query URL, get the results.
         """
         requester = requester or self.urlopen
-
+        print(url)
         try:
             page = requester(url, timeout=(timeout or self.timeout), **kwargs)
         except Exception as error: # pylint: disable=W0703
