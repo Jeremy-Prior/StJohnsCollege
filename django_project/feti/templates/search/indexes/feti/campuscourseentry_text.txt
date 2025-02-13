@@ -1,4 +1,0 @@
-{{ object.campus.long_description }}
-{{ object.campus.provider.primary_institution }}
-{{ object.campus.provider.website }}
-{{ object.course.long_description }}
