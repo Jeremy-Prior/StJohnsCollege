@@ -3,7 +3,7 @@
 """
 
 import csv
-from base64 import encodestring
+from base64 import encodebytes
 from geopy.compat import urlencode, py3k, Request
 from geopy.geocoders.base import (
     Geocoder,
@@ -96,7 +96,7 @@ class GeocoderDotUS(Geocoder):  # pylint: disable=W0223
         if self.authenticated is True:
             auth = " ".join((
                 "Basic",
-                encodestring(":".join((self.username, self.password))\
+                encodebytes(":".join((self.username, self.password))\
                     .encode('utf-8')).strip().decode('utf-8')
             ))
             url = Request(url, headers={"Authorization": auth})
