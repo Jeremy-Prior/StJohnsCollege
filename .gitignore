@@ -117,3 +117,4 @@ django_project/celerybeat-schedule.db
 
 # Grunt
 optimized.js
+.env
