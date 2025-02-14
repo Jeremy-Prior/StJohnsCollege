@@ -44,7 +44,8 @@ class GoogleV3(Geocoder):  # pylint: disable=R0902
             client_id=None,
             secret_key=None,
             timeout=DEFAULT_TIMEOUT,
-            proxies=None
+            proxies=None,
+            filter_less_accurate=False
         ):  # pylint: disable=R0913
         """
         Initialize a customized Google geocoder.
@@ -78,6 +79,10 @@ class GoogleV3(Geocoder):  # pylint: disable=R0902
             :class:`urllib2.ProxyHandler`.
 
             .. versionadded:: 0.96
+
+        :param string filter_less_accurate: If True, then filter
+            less accurate result which is partial_match or location_type is
+            not ROOFTOP or RANGE_INTERPOLATED. Default to False.
         """
         super(GoogleV3, self).__init__(
             scheme=scheme, timeout=timeout, proxies=proxies
@@ -106,6 +111,7 @@ class GoogleV3(Geocoder):  # pylint: disable=R0902
             self.scheme,
             self.domain
         )
+        self.filter_less_accurate = filter_less_accurate
 
     def _get_signed_url(self, params):
         """
@@ -342,12 +348,29 @@ class GoogleV3(Geocoder):  # pylint: disable=R0902
             location = place.get('formatted_address')
             latitude = place['geometry']['location']['lat']
             longitude = place['geometry']['location']['lng']
+            if self.filter_less_accurate:
+                location_type = place['geometry'].get('location_type', '')
+                partial_match = place.get('partial_match', False)
+                # Keep only highly accurate results
+                if (
+                    not partial_match and location_type in
+                    ["ROOFTOP", "RANGE_INTERPOLATED"]
+                ):
+                    return Location(location, (latitude, longitude), place)
+                else:
+                    return None
+
             return Location(location, (latitude, longitude), place)
 
         if exactly_one:
             return parse_place(places[0])
         else:
-            return [parse_place(place) for place in places]
+            result = []
+            for place in places:
+                loc = parse_place(place)
+                if loc:
+                    result.append(loc)
+            return result
 
     @staticmethod
     def _check_status(status):

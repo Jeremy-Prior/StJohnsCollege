@@ -43,16 +43,23 @@ def get_address(row, retry=1):
     return address
 
 
+def call_geocode(geolocator, address):
+    if isinstance(geolocator, Nominatim):
+        return geolocator.geocode(address)
+    elif isinstance(geolocator, GoogleV3):
+        return geolocator.geocode(address, region='ZA')
+
+
 def do_geocode(geolocator, address_1, address_2):
     # First attempt to geocode
-    location = geolocator.geocode(address_1)
+    location = call_geocode(geolocator, address_1)
     if location:
         return location, address_1
-    else:
+    elif address_1 != address_2:
         time.sleep(INTERVAL_CALL_IN_SECONDS)
         # Second attempt with a different address format
         if address_2:
-            location = geolocator.geocode(address_2)
+            location = call_geocode(geolocator, address_2)
             if location:
                 return location, address_2
 
@@ -63,10 +70,13 @@ def process(input_csv, output_shapefile):
     
     # Initialize the Nominatim geolocator correctly
     geolocator_dict  = {
-        'Nominatim': Nominatim(timeout=20),
-        'GoogleV3': GoogleV3(api_key=os.getenv('GOOGLE_API_KEY'), timeout=20)
+        'Nominatim': Nominatim(timeout=20, country_bias='ZA'),
+        'GoogleV3': GoogleV3(
+            api_key=os.getenv('GOOGLE_API_KEY'), timeout=20,
+            filter_less_accurate=True
+        )
     }
-    
+
     points = []
     addresses = []
     sources = []
@@ -79,12 +89,10 @@ def process(input_csv, output_shapefile):
         reader = csv.reader(file)
         next(reader)  # Skip the header row
 
-        for row in reader:
+        for idx, row in enumerate(reader):
             address = get_address(row, 1)
-            address.append('South Africa')
             address_1 = ', '.join(address)
             address = get_address(row, 2)
-            address.append('South Africa')
             address_2 = ', '.join(address)
 
             if address_1:
