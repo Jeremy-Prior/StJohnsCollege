@@ -4,8 +4,16 @@ import csv
 import os
 import geopandas as gpd
 from shapely.geometry import Point
-from geopy.geocoders import Nominatim
+from geopy.geocoders import Nominatim, GoogleV3
+from dotenv import load_dotenv
 import time
+
+
+INTERVAL_CALL_IN_SECONDS = 0.5
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 def get_address(row, retry=1):
     """Returns a list of address components based on row data."""
@@ -34,17 +42,34 @@ def get_address(row, retry=1):
             address.append(row[4].strip())
     return address
 
-from geopy.geocoders import Nominatim
-import time
+
+def do_geocode(geolocator, address_1, address_2):
+    # First attempt to geocode
+    location = geolocator.geocode(address_1)
+    if location:
+        return location, address_1
+    else:
+        time.sleep(INTERVAL_CALL_IN_SECONDS)
+        # Second attempt with a different address format
+        if address_2:
+            location = geolocator.geocode(address_2)
+            if location:
+                return location, address_2
+
+    return None, None
 
 def process(input_csv, output_shapefile):
     """Geocode the addresses in the input CSV file and save the results in a shapefile."""
     
     # Initialize the Nominatim geolocator correctly
-    geolocator = Nominatim(timeout=20)
+    geolocator_dict  = {
+        'Nominatim': Nominatim(timeout=20),
+        'GoogleV3': GoogleV3(api_key=os.getenv('GOOGLE_API_KEY'), timeout=20)
+    }
     
     points = []
     addresses = []
+    sources = []
     
     if not os.path.exists(input_csv):
         print(f"Error: Input file {input_csv} does not exist.")
@@ -53,36 +78,32 @@ def process(input_csv, output_shapefile):
     with open(input_csv, mode='r') as file:
         reader = csv.reader(file)
         next(reader)  # Skip the header row
-        
-        i = 0
+
         for row in reader:
             address = get_address(row, 1)
             address.append('South Africa')
-            address_str = ', '.join(address)
+            address_1 = ', '.join(address)
+            address = get_address(row, 2)
+            address.append('South Africa')
+            address_2 = ', '.join(address)
 
-            if address_str:
-                # First attempt to geocode the address using Nominatim
-                location = geolocator.geocode(address_str)
-                if location:
-                    points.append(Point(location.longitude, location.latitude))
-                    addresses.append(address_str)
-                else:
-                    time.sleep(0.5)
-                    # Second attempt with a different address format
-                    address = get_address(row, 2)
-                    address.append('South Africa')
-                    address_str = ','.join(address)
-                    if address_str:
-                        location = geolocator.geocode(address_str)
-                        if location:
-                            points.append(Point(location.longitude, location.latitude))
-                            addresses.append(address_str)
+            if address_1:
+                for source_key, geolocator in geolocator_dict.items():
+                    location, address_str = do_geocode(geolocator, address_1, address_2)
+                    if location:
+                        points.append(Point(location.longitude, location.latitude))
+                        addresses.append(address_str)
+                        sources.append(source_key)
+                        break
+                    else:
+                        # try next geolocator
+                        time.sleep(INTERVAL_CALL_IN_SECONDS)
             
             # Add a small delay to avoid overloading Nominatim's servers
-            time.sleep(1)
-    
+            time.sleep(INTERVAL_CALL_IN_SECONDS)
+
     # Create a GeoDataFrame and save to shapefile
-    gdf = gpd.GeoDataFrame({'Address': addresses}, geometry=points, crs="EPSG:4326")
+    gdf = gpd.GeoDataFrame({'Address': addresses, 'Source': sources}, geometry=points, crs="EPSG:4326")
     gdf.to_file(output_shapefile)
     print(f"Shapefile saved to {output_shapefile}")
 
