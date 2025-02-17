@@ -65,7 +65,7 @@ def do_geocode(geolocator, address_1, address_2):
 
     return None, None
 
-def process(input_csv, output_shapefile):
+def process(input_csv, output_shapefile, address_not_found_csv = None):
     """Geocode the addresses in the input CSV file and save the results in a shapefile."""
     
     # Initialize the Nominatim geolocator correctly
@@ -81,9 +81,11 @@ def process(input_csv, output_shapefile):
         )
     }
 
+    header = []
     points = []
     addresses = []
     sources = []
+    addresses_not_found = []
     
     if not os.path.exists(input_csv):
         print(f"Error: Input file {input_csv} does not exist.")
@@ -91,7 +93,7 @@ def process(input_csv, output_shapefile):
     
     with open(input_csv, mode='r') as file:
         reader = csv.reader(file)
-        next(reader)  # Skip the header row
+        header = next(reader)  # Skip the header row
 
         for idx, row in enumerate(reader):
             address = get_address(row, 1)
@@ -100,17 +102,22 @@ def process(input_csv, output_shapefile):
             address_2 = ', '.join(address)
 
             if address_1:
+                location_found = False
                 for source_key, geolocator in geolocator_dict.items():
                     location, address_str = do_geocode(geolocator, address_1, address_2)
                     if location:
                         points.append(Point(location.longitude, location.latitude))
                         addresses.append(address_str)
                         sources.append(source_key)
+                        location_found = True
                         break
                     else:
                         # try next geolocator
                         time.sleep(INTERVAL_CALL_IN_SECONDS)
-            
+
+                if not location_found:
+                    addresses_not_found.append(row)
+
             # Add a small delay to avoid overloading Nominatim's servers
             time.sleep(INTERVAL_CALL_IN_SECONDS)
 
@@ -118,6 +125,13 @@ def process(input_csv, output_shapefile):
     gdf = gpd.GeoDataFrame({'Address': addresses, 'Source': sources}, geometry=points, crs="EPSG:4326")
     gdf.to_file(output_shapefile)
     print(f"Shapefile saved to {output_shapefile}")
+
+    if address_not_found_csv and addresses_not_found:
+        with open(address_not_found_csv, mode='w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(header)  # Write the header
+            writer.writerows(addresses_not_found)  # Write the rows of addresses not found
+        print(f"Addresses not found saved to {address_not_found_csv}")
 
 def test():
     """Test geocoding."""
@@ -131,5 +145,6 @@ def test():
 # Example usage
 input_csv_file = '../../../Geomapping_Parents_Address_20240731.csv'  # Path to the input CSV file
 output_shapefile = '../../../geocoded_points.shp'  # Path for the output shapefile
+not_found_csv = '../../../not_found.csv' # Output path to the not found address
 
-process(input_csv_file, output_shapefile)
+process(input_csv_file, output_shapefile, not_found_csv)
