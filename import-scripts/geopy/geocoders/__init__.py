@@ -110,6 +110,7 @@ from geopy.geocoders.smartystreets import LiveAddress
 from geopy.geocoders.what3words import What3Words
 from geopy.geocoders.yandex import Yandex
 from geopy.geocoders.ignfrance import IGNFrance
+from geopy.geocoders.onemap import OneMap
 
 
 from geopy.exc import GeocoderNotFound
