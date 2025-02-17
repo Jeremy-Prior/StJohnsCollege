@@ -4,7 +4,7 @@ import csv
 import os
 import geopandas as gpd
 from shapely.geometry import Point
-from geopy.geocoders import Nominatim, GoogleV3
+from geopy.geocoders import Nominatim, GoogleV3, OneMap
 from dotenv import load_dotenv
 import time
 
@@ -44,7 +44,7 @@ def get_address(row, retry=1):
 
 
 def call_geocode(geolocator, address):
-    if isinstance(geolocator, Nominatim):
+    if isinstance(geolocator, (Nominatim, OneMap,)):
         return geolocator.geocode(address)
     elif isinstance(geolocator, GoogleV3):
         return geolocator.geocode(address, region='ZA')
@@ -74,6 +74,10 @@ def process(input_csv, output_shapefile):
         'GoogleV3': GoogleV3(
             api_key=os.getenv('GOOGLE_API_KEY'), timeout=20,
             filter_less_accurate=True
+        ),
+        'OneMap': OneMap(
+            os.getenv('ONE_MAP_USERNAME'),
+            os.getenv('ONE_MAP_PASSWORD')
         )
     }
 
