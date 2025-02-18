@@ -48,7 +48,12 @@ def get_address(row, retry=1):
 
 
 def call_geocode(geolocator, address):
-    return geolocator.geocode(address)
+    try:
+        return geolocator.geocode(address)
+    except Exception as ex:
+        print(f'Failed geocode! {str(ex)}')
+        print(ex)
+    return None
 
 
 def do_geocode(geolocator, address_1, address_2, interval=INTERVAL_CALL_IN_SECONDS):
@@ -90,8 +95,10 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
 
     header = []
     points = []
-    addresses = []
-    sources = []
+    outputs = {
+        'address': [],
+        'source': []
+    }
     addresses_not_found = []
     
     if not os.path.exists(input_csv):
@@ -101,6 +108,8 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
     with open(input_csv, mode='r') as file:
         reader = csv.reader(file)
         header = next(reader)  # Skip the header row
+        for col in header:
+            outputs[col] = []
 
         for idx, row in enumerate(reader):
             address = get_address(row, 1)
@@ -116,8 +125,10 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
                     )
                     if location:
                         points.append(Point(location.longitude, location.latitude))
-                        addresses.append(address_str)
-                        sources.append(source_key)
+                        outputs['address'].append(address_str)
+                        outputs['source'].append(source_key)
+                        for col_idx, col in enumerate(header):
+                            outputs[col].append(row[col_idx])
                         location_found = True
                         break
 
@@ -125,7 +136,7 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
                     addresses_not_found.append(row)
 
     # Create a GeoDataFrame and save to shapefile
-    gdf = gpd.GeoDataFrame({'Address': addresses, 'Source': sources}, geometry=points, crs="EPSG:4326")
+    gdf = gpd.GeoDataFrame(outputs, geometry=points, crs="EPSG:4326")
     gdf.to_file(output_shapefile)
     print(f"Shapefile saved to {output_shapefile}")
 
