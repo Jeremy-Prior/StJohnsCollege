@@ -29,6 +29,8 @@ def get_address(row, retry=1):
             address.append(row[3].strip())
         if row[4]:
             address.append(row[4].strip())
+        if row[5]:
+            address.append(row[5].strip())
     if retry == 2:
         if row[0] and row[0] != 'Cnr':
             address.append(row[0].strip())
@@ -40,26 +42,26 @@ def get_address(row, retry=1):
             address.append(row[3].strip())
         if row[4]:
             address.append(row[4].strip())
+        if row[5]:
+            address.append(row[5].strip())
     return address
 
 
 def call_geocode(geolocator, address):
-    if isinstance(geolocator, (Nominatim, OneMap,)):
-        return geolocator.geocode(address)
-    elif isinstance(geolocator, GoogleV3):
-        return geolocator.geocode(address, region='ZA')
+    return geolocator.geocode(address)
 
 
-def do_geocode(geolocator, address_1, address_2):
+def do_geocode(geolocator, address_1, address_2, interval=INTERVAL_CALL_IN_SECONDS):
     # First attempt to geocode
     location = call_geocode(geolocator, address_1)
+    time.sleep(interval)
     if location:
         return location, address_1
     elif address_1 != address_2:
-        time.sleep(INTERVAL_CALL_IN_SECONDS)
         # Second attempt with a different address format
         if address_2:
             location = call_geocode(geolocator, address_2)
+            time.sleep(interval)
             if location:
                 return location, address_2
 
@@ -70,7 +72,7 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
     
     # Initialize the Nominatim geolocator correctly
     geolocator_dict  = {
-        'Nominatim': Nominatim(timeout=20, country_bias='ZA'),
+        'Nominatim': Nominatim(timeout=20),
         'GoogleV3': GoogleV3(
             api_key=os.getenv('GOOGLE_API_KEY'), timeout=20,
             filter_less_accurate=True
@@ -79,6 +81,11 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
             os.getenv('ONE_MAP_USERNAME'),
             os.getenv('ONE_MAP_PASSWORD')
         )
+    }
+    time_out_dict = {
+        'Nominatim': INTERVAL_CALL_IN_SECONDS,
+        'GoogleV3': INTERVAL_CALL_IN_SECONDS,
+        'OneMap': 1  # override for one map
     }
 
     header = []
@@ -104,22 +111,18 @@ def process(input_csv, output_shapefile, address_not_found_csv = None):
             if address_1:
                 location_found = False
                 for source_key, geolocator in geolocator_dict.items():
-                    location, address_str = do_geocode(geolocator, address_1, address_2)
+                    location, address_str = do_geocode(
+                        geolocator, address_1, address_2, interval=time_out_dict[source_key]
+                    )
                     if location:
                         points.append(Point(location.longitude, location.latitude))
                         addresses.append(address_str)
                         sources.append(source_key)
                         location_found = True
                         break
-                    else:
-                        # try next geolocator
-                        time.sleep(INTERVAL_CALL_IN_SECONDS)
 
                 if not location_found:
                     addresses_not_found.append(row)
-
-            # Add a small delay to avoid overloading Nominatim's servers
-            time.sleep(INTERVAL_CALL_IN_SECONDS)
 
     # Create a GeoDataFrame and save to shapefile
     gdf = gpd.GeoDataFrame({'Address': addresses, 'Source': sources}, geometry=points, crs="EPSG:4326")
